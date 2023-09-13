@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+
+  django-backend:
+    build: ./backend
+    container_name: django-backend
+    volumes:
+    - ./backend:/app/backend
+    ports:
+      - 8000:8000
+    command: python backend/manage.py runserver 0.0.0.0:8000
+
+  react-frontend:
+    build: ./frontend
+    container_name: react-frontend
+    volumes:
+      - ./frontend:/app/frontend
+    depends_on:
+      - django-backend
+    ports:
+      - 3000:3000
+    command: npm start

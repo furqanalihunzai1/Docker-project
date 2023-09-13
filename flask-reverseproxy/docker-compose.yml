@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  redis-service:
+    image: "redis:alpine"
+    container_name: redis
+
+  web:
+    build: .
+    ports:
+      - 5000
+    volumes:
+      - .:/usr/src/app
+    command: python app.py
+    depends_on:
+      - redis-service
+      - web-server
+  
+  #internal
+  web-server:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+
+    container_name: web-server
+    volumes:
+      - ./static/:/usr/share/nginx/html/
+    ports:
+      - 8080
+  #external
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
